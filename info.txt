@@ -1,0 +1,233 @@
+This file gives a short introduction to the neurite growth simulator
+written in python, with work name iGrow.
+
+______________________________________________________________________________
+
+solver.py
+
+This is the solver used by the simulator to advance time and to keep
+track of all the different states. It uses the clock object to track
+time.
+
+
+verbose
+
+The program prints more information about what is going on when this
+is set to true.
+
+
+maxNumElement
+
+Specify how large the solver matrix is pre-allocated. If the
+simulation growths beyond this size the matrix is automatically
+expanded.
+
+
+solverType
+
+Specifies the method used by the solver, can be impEuler, RK4, euler,
+RK2. The implicit euler method is recommended.
+
+
+maxCompartmentLength, minCompartmentLength
+
+The solver automatically splits compartments that get too big, and
+merges compartment if they are smaller than a predefined size.
+
+Options:
+preventSplittingOfGrowthCones  True/False
+
+
+quantity, transport, reaction, production
+
+The quantity matrix keeps track of how many molecules each compartment
+contain (in mol). Transport, reaction and production each describe the
+flux, reactions and production of molecules. They are updated by the
+step function each time step.
+
+
+setClock
+
+Replaces the old clock with a new clock object specified by the user.
+
+
+setStepAction
+
+Lets the user specify a function that is called every step, good for
+customizing your simulations.
+
+
+addCompartment
+
+Adds a compartment to be tracted by the solver in the simulation.
+
+
+markModified
+
+Internal function that keeps track of which compartments needs to have
+their elements in the reaction, transport and production matrixes
+recalculated.
+
+
+addGrowthCone, removeGrowthCone
+
+Growth cones are special compartments which can elongate and retract
+depending on their states. Strictly speaking it is not the compartment
+itself that changes size, instead it moves, and the second compartment
+will elongate or retract to compensate. This helps reduce the
+fluctuations in the concentration due to volume changes.
+
+
+setSaveFile
+
+Specifies which file to save the simulation output to. The first in
+argument is the name, the second one is an optional flag to specify
+whether only the concentrations in the compartments, or also the
+fluxes should be saved.
+
+
+init
+
+Initialises the solver. It verifies that every compartment has a
+positive length, and also merges and splits compartment when needed
+based on maxCompartmentLength and minCompartmentLength.
+
+Optionally this can also try and remove transients by calling the
+function removeTransients. It also calls _stepAction.init() if there
+is a _stepAction function defined.
+
+
+step
+
+First calls the user supplied _stepAction, if any exists. Then it
+steps the simulation forward one time step using the selected solver
+method, the time step is defined in the clock object. The reaction,
+transport and productions are calculated. Then the growth cones are
+updated and moved. After that the spatial discretisation is updated,
+and the transport and reaction matrixes are updated
+accordingly. Lastly the output from this time step is written to file.
+
+
+stop
+
+This function checks if any of the stop conditions specified by the
+user where met, and if so takes appropriate action then removes the
+stop condition. For example one action could be to save the current
+state, change a parameter, continue the simulation, the restart it
+from the save point and change another parameter. This gives plenty of
+flexibility, and also saves time as the entire simulation need not be
+rerun.
+
+
+addStopCondition, clearStopCondition
+
+Specifies a stop condition that is checked each simulation step, the
+stop condition also includes an optional action to be taken after
+stopping the simulation.
+
+
+finish
+
+Finishing up the simulation, closing the output file.
+
+
+removeTransient
+
+Tries to remove any transients by first estimating how long it would
+take for diffusion to propagate from the soma to growth cone furthest
+away. It clamps the soma and the growth cone concentrations during the
+transient removal process.
+
+
+findInitState
+
+Performs similar function to removeTransient. Why did I write two functions?!
+
+
+run
+
+Runs the simulation from current time to end of simulation.
+
+
+stepEuler, stepRK2, stepRK4, implicitEuler
+
+Helper function to step the simulation one time step forward using a
+given method.
+
+
+increaseMaxNumElement
+
+Increases the number of substances tracked by the solver. When the old
+limit is hit this function is automatically called.
+
+
+calculateTransportReactionMatrix, removeCompartmentTransportReaction,
+clearCompartmentTransport, _transportMatrixConservation,
+_setTransportMatrix, _setReactionMatrix,
+setTransportReactionMatrixOneSided,
+setTransportReactionMatrixTwoSided,
+setTransportMatrixTwoSided
+
+Modifies the transport and reaction matrixes.
+
+
+setProduction
+
+Goes through all substances and sets their production rate specified
+by the substane objects.
+
+
+updateSpatialDiscretisation
+
+Merges and splits compartments when needed. Called by step, uses the
+helper functions _splitCompartment and _mergeCompartment.
+
+
+printComps
+
+Prints all compartments to stdout.
+
+
+saveState, loadState
+
+Saves and loads the state of the simulation.
+
+
+
+> experiment.py
+
+This file contains the default parameters for the simulation. 
+
+Defined:
+
+neuriteGrowthPoly - polymerisation rate
+neuriteGrowthDepoly - depolymerisation rate
+tubulinConcentrationNeurite 
+tubulinConcentrationSoma
+neuriteRadie
+tubulinQuantityPerLength
+tubulinDiffusionConstant
+tubulinDegradationConstant
+tubulinActiveTransportRate
+tubulinQuantitySoma
+tubulinQuantityNeurite
+tubulinQuantityGrowthCone
+tubulinSomaProductionRate
+
+
+
+______________________________________________________________________________
+
+> experimentLoaderPredictSpeed.py
+
+This function loads an experiment from a text file previously written
+by matlab, or by hand. It takes the solver, a file to load and an
+optional overwrite flag, whether an existing output file will be
+overwritten or prevent this parameter set for being recalculated. The
+latter is useful if multiple workers are using the same list of files
+to load.
+
+
+
+
+

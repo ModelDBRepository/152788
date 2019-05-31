@@ -1,0 +1,130 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f0\fs24 \cf0 This is a quick start guide for how to use iGrow, a compartmental simulation of diffusion and active transport in a neuron. You need python with numpy installed.\
+\
+Run the examples from our article:\
+\
+\
+
+\b Figure 1:\
+
+\b0 \
+Illustration of model, no simulations to run.\
+\
+\
+
+\b Figure 2: \
+
+\b0 \
+Run the following matlab script to generate figure 2B1 and 2B2. The script writes a list of jobs to the file FIG2A-diffusion-only-summary.txt located in the \'93input\'94 directory. You can in the script specify how many workers you want to have perform the jobs. The default is nWorkers = 3. If you increase this number then you need to start more workers to make sure that all the jobs get run as each job belongs to a specific worker. Running the setup script creates a neuron with one primary branch and two secondary branches, and repeats the simulations with different diffusion constants.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
+
+\f1\fs22 \cf0 \CocoaLigature0 runSimFig2A.m\
+\
+
+\f0\fs24 \CocoaLigature1 The script will display three lines of commands that are used to run the python workers that do the simulations:\
+\
+
+\f1\fs22 \CocoaLigature0 python runSimWorker.py input/FIG2A-diffusion-only-summary.txt 1\
+python runSimWorker.py input/FIG2A-diffusion-only-summary.txt 2\
+python runSimWorker.py input/FIG2A-diffusion-only-summary.txt 3\
+
+\f0\fs24 \CocoaLigature1 \
+After the simulations are done run the following script to generate the figures 2B1 and 2B2.\
+\
+
+\f1\fs22 \CocoaLigature0 plotTwoGrowthConesFig2A.m\
+
+\f0\fs24 \CocoaLigature1 \
+Status: Verified.\
+\
+\
+To generate figures 2C1 and 2C2 please run the following script, and then start the python workers indicated (as per the example above):\
+\
+
+\f1\fs22 \CocoaLigature0 runSimFig2C.m
+\f0\fs24 \CocoaLigature1 \
+\
+To run workers:\
+\
+
+\f1\fs22 \CocoaLigature0 python runSimWorker.py input/Fig2C-diffusion-and-active-transport-summary.txt 1\
+python runSimWorker.py input/Fig2C-diffusion-and-active-transport-summary.txt 2\
+python runSimWorker.py input/Fig2C-diffusion-and-active-transport-summary.txt 3
+\f0\fs24 \CocoaLigature1 \
+\
+Generate the figures for Figure 2C1 and 2C2:\
+\
+
+\f1\fs22 \CocoaLigature0 plotTwoGrowthConesFig2C.m\
+
+\f0\fs24 \CocoaLigature1 \
+\
+Finally to make the Figure 2D, start by setting up the work list:\
+\
+
+\f1\fs22 \CocoaLigature0 runSimFig2D.m\
+\
+
+\f0\fs24 \CocoaLigature1 Run the workers:\
+\
+
+\f1\fs22 \CocoaLigature0 python runSimWorker.py input/Fig2D-X-Y-range-summary.txt 1\
+python runSimWorker.py input/Fig2D-X-Y-range-summary.txt 2\
+python runSimWorker.py input/Fig2D-X-Y-range-summary.txt 3
+\f0\fs24 \CocoaLigature1 \
+\
+Generate the figures:\
+\
+
+\f1\fs22 \CocoaLigature0 plotTwoGrowthCones2D.m
+\f0\fs24 \CocoaLigature1 \
+
+\f1\fs22 \CocoaLigature0 \
+\
+Status: Verified.\
+\
+Figure 3:\
+\
+This figure shows results of competition in a model simulation starting from a real hippocampal neuron morphology. The simulation is run as many times as there are growth cones, plus one reference case. In the line below, replace the data path with your own path to the files, also the number at the end must be changed to run different growth cones (-1 is reference). \
+\
+python runSimDistanceDependence.py DATA/cell1.swc 0\
+\
+To generate the dendrogram figure, copy the data files, and run:\
+\
+analyseDistanceDependenceCompetition.m\
+\
+To get the rendering of the morphology you need to have povray installed.\
+\
+exportToPovRay(\'91DATA/\'91,\'92cell1.swc-NOGCmod-out.txt',[],500)\
+\
+Status: Partly verified, no povray on my mac machine.\
+\
+\
+Figure 4:\
+\
+To initialise the simulations, run the following matlab scripts:\
+\
+setupPredictSpeedSimulation.m\
+\
+You have the option to use either the standard workers, or try the parallell version of the script:\
+\
+python runSimWorkerPredictSpeed.py input/GridSearch/predict-growth-speed-summary.txt 1\
+\
+python runSimWorkerPredictSpeedParallel.py input/GridSearch/predict-growth-speed-summary.txt\
+\
+The result figures are generated using:\
+\
+calculatePredictionFitness\
+\
+Status: Partly verified, ran a limited search.\
+\
+\
+\
+\
+}
